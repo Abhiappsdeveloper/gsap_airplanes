@@ -289,6 +289,7 @@
         align-items: center;
         justify-content: center;
         font-size: var(--font-size-medium);
+        color: white;
     }
 
     /* Animation Control Panel */
@@ -319,6 +320,10 @@
     .animation-controls button:hover {
         background: #ffffff;
     }
+
+    .animation-controls button:active {
+        transform: scale(0.95);
+    }
 </style>
 
 <body>
@@ -344,14 +349,13 @@
 
     <!-- Main Content -->
     <div class="content">
-        <div class="loading">Loading</div>
+        <div class="loading">Loading...</div>
         <div class="trigger"></div>
+        
         <div class="section">
             <h1 class="split-title">Top IT Jobs.</h1>
             <h3 class="split-subtitle">Highest Paying Roles & Market Trends.</h3>
-            <p class="split-description">
-                The fastest-growing tech careers in 2026.
-            </p>
+            <p class="split-description">The fastest-growing tech careers in 2026.</p>
             <div class="scroll-cta">Scroll</div>
         </div>
 
@@ -493,7 +497,6 @@
                 _defineProperty(this, "render",
                     () => {
                         for (var ii = 0; ii < this.views.length; ++ii) {
-
                             var view = this.views[ii];
                             var camera = view.camera;
 
@@ -509,7 +512,6 @@
                         }
                     });
                 _defineProperty(this, "onResize",
-
                     () => {
                         this.w = window.innerWidth;
                         this.h = window.innerHeight;
@@ -526,6 +528,7 @@
                         this.renderer.setSize(this.w, this.h);
                         this.render();
                     });
+                    
                 this.views = [{
                     bottom: 0,
                     height: 1
@@ -533,6 +536,7 @@
                     bottom: 0,
                     height: 0
                 }];
+                
                 this.renderer = new THREE.WebGLRenderer({
                     antialias: true,
                     alpha: true
@@ -559,11 +563,13 @@
                 this.light.position.x = 70;
                 this.light.position.y = -20;
                 this.scene.add(this.light);
+                
                 this.softLight = new THREE.AmbientLight(0xffffff, 1.5);
                 this.scene.add(this.softLight);
 
                 this.onResize();
                 window.addEventListener('resize', this.onResize, false);
+                
                 var edges = new THREE.EdgesGeometry(model.children[0].geometry);
                 let line = new THREE.LineSegments(edges);
                 line.material.depthTest = false;
@@ -572,6 +578,7 @@
                 line.position.x = 0.5;
                 line.position.z = -1;
                 line.position.y = 0.2;
+                
                 this.modelGroup = new THREE.Group();
                 model.layers.set(0);
                 line.layers.set(1);
@@ -581,22 +588,17 @@
             }
         }
 
-        // Global SplitText state - EXACTLY LIKE THE DEMO
+        // ============ GLOBAL STATE - SIMPLE AND DIRECT ============
         let split, animation;
 
         function loadModel() {
             gsap.registerPlugin(ScrollTrigger);
             gsap.registerPlugin(DrawSVGPlugin);
             gsap.registerPlugin(SplitText);
-            gsap.set('#line-length', {
-                drawSVG: 0
-            });
-            gsap.set('#line-wingspan', {
-                drawSVG: 0
-            });
-            gsap.set('#circle-phalange', {
-                drawSVG: 0
-            });
+            
+            gsap.set('#line-length', { drawSVG: 0 });
+            gsap.set('#line-wingspan', { drawSVG: 0 });
+            gsap.set('#circle-phalange', { drawSVG: 0 });
 
             var object;
 
@@ -640,6 +642,7 @@
                 x: "0%",
                 autoAlpha: 1
             });
+            
             gsap.to('.loading', {
                 autoAlpha: 0
             });
@@ -663,12 +666,12 @@
 
             scene.render();
 
-            // ========== FIXED: Create SplitText ONCE with ALL types ==========
+            // ============ CREATE SPLITTEXT ONCE WITH ALL TYPES ============
             split = SplitText.create(".split-title", {
                 type: "chars,words,lines"
             });
 
-            // Initial animation on page load - EXACTLY LIKE DEMO
+            // ============ INITIAL ANIMATION ON PAGE LOAD ============
             gsap.timeline()
                 .from(split.chars, {
                     x: 150,
@@ -678,7 +681,7 @@
                     ease: "power4.out"
                 });
 
-            // ========== FIXED: Setup button listeners EXACTLY LIKE DEMO ==========
+            // ============ SETUP BUTTON EVENT LISTENERS ============
             document.querySelector("#chars").addEventListener("click", () => {
                 animation && animation.revert();
                 animation = gsap.from(split.chars, {
@@ -722,6 +725,7 @@
 
             var sectionDuration = 1;
             
+            // ============ SCROLL ANIMATIONS ============
             gsap.fromTo(scene.views[1], {
                 height: 1,
                 bottom: 0
@@ -835,6 +839,7 @@
                 }
             });
 
+            // ============ 3D MODEL SCROLL ANIMATION TIMELINE ============
             let tl = new gsap.timeline({
                 onUpdate: scene.render,
                 scrollTrigger: {
@@ -843,7 +848,6 @@
                     start: "top top",
                     end: "bottom bottom"
                 },
-
                 defaults: {
                     duration: sectionDuration,
                     ease: 'power2.inOut'
