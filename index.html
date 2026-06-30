@@ -626,55 +626,43 @@
 
             scene.render();
 
-            ScrollTrigger.create({
-                trigger: ".section:first-child",
-                start: "top 75%",
-
-                onEnter: () => {
-
-                    let title = SplitText.create(".split-title", {
-                        type: "chars"
-                    });
-
-                    let subtitle = SplitText.create(".split-subtitle", {
-                        type: "words"
-                    });
-
-                    let desc = SplitText.create(".split-description", {
-                        type: "words"
-                    });
-
-                    gsap.timeline()
-
-                        .from(title.chars, {
-                            x: 150,
-                            opacity: 0,
-                            stagger: 0.04,
-                            duration: 0.8,
-                            ease: "power4.out"
-                        })
-
-                        .from(subtitle.words, {
-                            y: -80,
-                            opacity: 0,
-                            rotation: "random(-80,80)",
-                            stagger: 0.08,
-                            duration: 0.8,
-                            ease: "back.out(1.7)"
-                        }, "-=0.4")
-
-                        .from(desc.words, {
-                            y: 40,
-                            opacity: 0,
-                            stagger: 0.04,
-                            duration: 0.8,
-                            ease: "power3.out"
-                        }, "-=0.4");
-
-                }
+            let title = SplitText.create(".split-title", {
+                type: "chars"
             });
 
+            let subtitle = SplitText.create(".split-subtitle", {
+                type: "words"
+            });
+
+            let desc = SplitText.create(".split-description", {
+                type: "words"
+            });
+
+            gsap.timeline()
+                .from(title.chars, {
+                    x: 150,
+                    opacity: 0,
+                    stagger: 0.04,
+                    duration: 0.8,
+                    ease: "power4.out"
+                })
+                .from(subtitle.words, {
+                    y: -80,
+                    opacity: 0,
+                    rotation: "random(-80,80)",
+                    stagger: 0.08,
+                    duration: 0.8,
+                    ease: "back.out(1.7)"
+                }, "-=0.4")
+                .from(desc.words, {
+                    y: 40,
+                    opacity: 0,
+                    stagger: 0.04,
+                    duration: 0.8,
+                    ease: "power3.out"
+                }, "-=0.4");
             var sectionDuration = 1;
+            
             gsap.fromTo(scene.views[1], {
                 height: 1,
                 bottom: 0
