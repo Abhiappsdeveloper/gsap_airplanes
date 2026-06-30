@@ -567,6 +567,15 @@
                     child.material = mat;
                 });
 
+                // Increase object size
+                object.scale.set(50, 50, 50);
+
+                // Center the object
+                const box = new THREE.Box3().setFromObject(object);
+                const center = box.getCenter(new THREE.Vector3());
+
+                object.position.sub(center);
+
                 setupAnimation(object);
             }
 
