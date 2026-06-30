@@ -290,6 +290,35 @@
         justify-content: center;
         font-size: var(--font-size-medium);
     }
+
+    /* Animation Control Panel */
+    .animation-controls {
+        position: fixed;
+        top: 100px;
+        right: 20px;
+        z-index: 500;
+        background: rgba(0, 0, 0, 0.8);
+        padding: 20px;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .animation-controls button {
+        background: #D0CBC7;
+        border: none;
+        padding: 10px 15px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: bold;
+        transition: background 0.3s ease;
+        font-size: 12px;
+    }
+
+    .animation-controls button:hover {
+        background: #ffffff;
+    }
 </style>
 
 <body>
@@ -304,6 +333,14 @@
             </ul>
         </nav>
     </header>
+
+    <!-- Animation Controls -->
+    <div class="animation-controls">
+        <button id="chars">Characters</button>
+        <button id="words">Words</button>
+        <button id="lines">Lines</button>
+        <button id="reset">Reset</button>
+    </div>
 
     <!-- Main Content -->
     <div class="content">
@@ -433,6 +470,7 @@
     <script src='https://cdnjs.cloudflare.com/ajax/libs/gsap/3.3.1/ScrollTrigger.min.js'></script>
     <script src='https://s3-us-west-2.amazonaws.com/s.cdpn.io/16327/DrawSVGPlugin3.min.js'></script>
     <script src="https://assets.codepen.io/16327/SplitText3-beta.min.js?b=43"></script>
+
     <script>
         function _defineProperty(obj, key, value) {
             if (key in obj) {
@@ -543,6 +581,9 @@
             }
         }
 
+        // Global SplitText state - EXACTLY LIKE THE DEMO
+        let split, animation;
+
         function loadModel() {
             gsap.registerPlugin(ScrollTrigger);
             gsap.registerPlugin(DrawSVGPlugin);
@@ -570,13 +611,9 @@
                     child.material = mat;
                 });
 
-                // Increase object size
                 object.scale.set(50, 50, 50);
-
-                // Center the object
                 const box = new THREE.Box3().setFromObject(object);
                 const center = box.getCenter(new THREE.Vector3());
-
                 object.position.sub(center);
 
                 setupAnimation(object);
@@ -626,41 +663,63 @@
 
             scene.render();
 
-            let title = SplitText.create(".split-title", {
-                type: "chars"
+            // ========== FIXED: Create SplitText ONCE with ALL types ==========
+            split = SplitText.create(".split-title", {
+                type: "chars,words,lines"
             });
 
-            let subtitle = SplitText.create(".split-subtitle", {
-                type: "words"
-            });
-
-            let desc = SplitText.create(".split-description", {
-                type: "words"
-            });
-
+            // Initial animation on page load - EXACTLY LIKE DEMO
             gsap.timeline()
-                .from(title.chars, {
+                .from(split.chars, {
                     x: 150,
                     opacity: 0,
                     stagger: 0.04,
                     duration: 0.8,
                     ease: "power4.out"
-                })
-                .from(subtitle.words, {
-                    y: -80,
+                });
+
+            // ========== FIXED: Setup button listeners EXACTLY LIKE DEMO ==========
+            document.querySelector("#chars").addEventListener("click", () => {
+                animation && animation.revert();
+                animation = gsap.from(split.chars, {
+                    x: 150,
                     opacity: 0,
-                    rotation: "random(-80,80)",
-                    stagger: 0.08,
-                    duration: 0.8,
-                    ease: "back.out(1.7)"
-                }, "-=0.4")
-                .from(desc.words, {
-                    y: 40,
+                    duration: 0.7,
+                    ease: "power4.out",
+                    stagger: 0.04
+                });
+            });
+
+            document.querySelector("#words").addEventListener("click", () => {
+                animation && animation.revert();
+                animation = gsap.from(split.words, {
+                    y: -100,
                     opacity: 0,
-                    stagger: 0.04,
+                    rotation: "random(-80, 80)",
+                    duration: 0.7,
+                    ease: "back.out(1.7)",
+                    stagger: 0.15
+                });
+            });
+
+            document.querySelector("#lines").addEventListener("click", () => {
+                animation && animation.revert();
+                animation = gsap.from(split.lines, {
+                    rotationX: -100,
+                    transformOrigin: "50% 50% -160px",
+                    opacity: 0,
                     duration: 0.8,
-                    ease: "power3.out"
-                }, "-=0.4");
+                    ease: "power3.out",
+                    stagger: 0.25
+                });
+            });
+
+            document.querySelector("#reset").addEventListener("click", () => {
+                animation && animation.revert();
+                split.revert();
+                split = SplitText.create(".split-title", { type: "chars,words,lines" });
+            });
+
             var sectionDuration = 1;
             
             gsap.fromTo(scene.views[1], {
